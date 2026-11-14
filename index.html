@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>SpaceX (SPCX) — Next-Gen Space Dashboard</title>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- Modern Futuristic Typography: Plus Jakarta Sans + Pretendard + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Pretendard:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================================
+       Next-Gen Cosmic Luxury & Aurora Gradient Design Tokens
+       ========================================================= */
+    :root {
+      --space-black: #05070d;
+      --card-bg: rgba(14, 18, 30, 0.65);
+      --card-bg-hover: rgba(20, 27, 46, 0.85);
+      --card-border: rgba(255, 255, 255, 0.08);
+
+      /* Multi-Color Cosmic & Aurora Gradients */
+      --grad-aurora: linear-gradient(135deg, #ff007a 0%, #7928ca 50%, #00f2fe 100%);
+      --grad-gold: linear-gradient(135deg, #ffe259 0%, #ffa751 100%);
+      --grad-cyan-blue: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+      --grad-hyper-purple: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+      --grad-emerald: linear-gradient(135deg, #10b981 0%, #059669 100%);
+
+      /* Accent Glows */
+      --glow-gold: rgba(255, 179, 71, 0.35);
+      --glow-cyan: rgba(0, 242, 254, 0.3);
+      --glow-purple: rgba(168, 85, 247, 0.3);
+
+      --text-main: #ffffff;
+      --text-sub: #cbd5e1;
+      --text-muted: #8492a6;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --radius-pill: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--space-black);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: 100px;
+      position: relative;
+    }
+
+    /* =========================================================
+       Animated Cosmic Aurora Mesh Background
+       ========================================================= */
+    .cosmic-mesh {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .aurora-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(110px);
+      opacity: 0.45;
+      animation: drift 18s infinite alternate ease-in-out;
+    }
+
+    .orb-1 {
+      top: -120px;
+      left: 15%;
+      width: 650px;
+      height: 500px;
+      background: radial-gradient(circle, #7928ca 0%, rgba(121, 40, 202, 0) 70%);
+      animation-duration: 16s;
+    }
+
+    .orb-2 {
+      top: 10%;
+      right: -100px;
+      width: 750px;
+      height: 600px;
+      background: radial-gradient(circle, #00f2fe 0%, rgba(0, 242, 254, 0) 70%);
+      animation-duration: 22s;
+    }
+
+    .orb-3 {
+      bottom: -150px;
+      left: 20%;
+      width: 700px;
+      height: 550px;
+      background: radial-gradient(circle, #ff007a 0%, rgba(255, 0, 122, 0) 70%);
+      animation-duration: 26s;
+    }
+
+    .orb-gold {
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(255, 179, 71, 0.22) 0%, rgba(255, 179, 71, 0) 70%);
+      filter: blur(130px);
+      animation: pulseGold 8s infinite alternate ease-in-out;
+    }
+
+    @keyframes drift {
+      0% { transform: translateY(0px) rotate(0deg) scale(1); }
+      100% { transform: translateY(80px) rotate(20deg) scale(1.15); }
+    }
+
+    @keyframes pulseGold {
+      0% { opacity: 0.2; transform: translate(-50%, -50%) scale(0.9); }
+      100% { opacity: 0.45; transform: translate(-50%, -50%) scale(1.15); }
+    }
+
+    /* Cosmic Grid Overlay */
+    .cosmic-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* =========================================================
+       Top Floating Aurora Pill Banner
+       ========================================================= */
+    .top-floating-wrap {
+      position: sticky;
+      top: 16px;
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      padding: 0 16px;
+      pointer-events: none;
+    }
+
+    .top-floating-pill {
+      pointer-events: auto;
+      background: rgba(14, 18, 30, 0.85);
+      backdrop-filter: blur(28px) saturate(200%);
+      -webkit-backdrop-filter: blur(28px) saturate(200%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-pill);
+      padding: 8px 22px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-sub);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 255, 255, 0.1) inset;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .top-floating-pill:hover {
+      border-color: #00f2fe;
+      box-shadow: 0 12px 35px rgba(0, 242, 254, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .neon-pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #00f2fe;
+      box-shadow: 0 0 12px #00f2fe, 0 0 24px #4facfe;
+      animation: neonFlicker 2s infinite alternate;
+    }
+
+    @keyframes neonFlicker {
+      0% { opacity: 0.6; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1.2); }
+    }
+
+    .pill-glow-badge {
+      background: var(--grad-aurora);
+      color: #ffffff;
+      padding: 2px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    /* Container */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1120px;
+      margin: 40px auto 0;
+      padding: 0 20px;
+    }
+
+    /* =========================================================
+       Hero Header: Cyber-Prestige Space Theme
+       ========================================================= */
+    .hero-glow-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(32px) saturate(180%);
+      -webkit-backdrop-filter: blur(32px) saturate(180%);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-xl);
+      padding: 34px 32px;
+      margin-bottom: 26px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 1px 1px rgba(255, 255, 255, 0.08) inset;
+    }
+
+    .hero-glow-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--grad-aurora);
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #00f2fe;
+      margin-bottom: 8px;
+    }
+
+    .company-title {
+      font-size: 2.85rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .gradient-title-text {
+      background: linear-gradient(135deg, #ffffff 30%, #cbd5e1 70%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .ticker-glow-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.05rem;
+      font-weight: 800;
+      padding: 5px 14px;
+      border-radius: var(--radius-pill);
+      background: rgba(0, 242, 254, 0.1);
+      border: 1px solid rgba(0, 242, 254, 0.4);
+      color: #00f2fe;
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.25);
+    }
+
+    .meta-details-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Live Metrics Aurora Grid */
+    .metrics-aurora-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr 1fr 1fr;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .metric-holo-card {
+      background: rgba(22, 28, 48, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 22px 20px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-holo-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.06), transparent 70%);
+      pointer-events: none;
+    }
+
+    .metric-holo-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, 0.22);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), 0 0 20px rgba(121, 40, 202, 0.25);
+    }
+
+    .metric-holo-card.featured-main {
+      border: 1px solid rgba(255, 179, 71, 0.3);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 179, 71, 0.12);
+    }
+
+    .holo-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .holo-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2.1rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+
+    .holo-value.glow-gold {
+      background: var(--grad-gold);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 12px rgba(255, 179, 71, 0.35));
+    }
+
+    .holo-sub {
+      font-size: 0.82rem;
+      color: var(--text-sub);
+      margin-top: 6px;
+    }
+
+    .neon-down {
+      color: #38bdf8;
+      font-weight: 700;
+      text-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    }
+
+    .neon-up {
+      color: #34d399;
+      font-weight: 700;
+      text-shadow: 0 0 12px rgba(52, 211, 153, 0.4);
+    }
+
+    /* =========================================================
+       Neon Tag Badges: 사실 / AI 해석 / 확인 필요
+       ========================================================= */
+    .holo-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .holo-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .tag-fact {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10b981;
+      color: #34d399;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.25);
+    }
+    .tag-fact .holo-dot { background: #34d399; box-shadow: 0 0 8px #10b981; }
+
+    .tag-ai {
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid #a855f7;
+      color: #d8b4fe;
+      box-shadow: 0 0 10px rgba(168, 85, 247, 0.25);
+    }
+    .tag-ai .holo-dot { background: #c084fc; box-shadow: 0 0 8px #a855f7; }
+
+    .tag-check {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid #f59e0b;
+      color: #fcd34d;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.25);
+    }
+    .tag-check .holo-dot { background: #fbbf24; box-shadow: 0 0 8px #f59e0b; }
+
+    /* Legend Strip */
+    .legend-floating-strip {
+      background: rgba(14, 18, 30, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-pill);
+      padding: 10px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 20px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .legend-tags-group {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* =========================================================
+       Glass Card Container (Section Blocks)
+       ========================================================= */
+    .glass-section {
+      background: var(--card-bg);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-xl);
+      padding: 32px 30px;
+      margin-bottom: 26px;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 255, 255, 0.06) inset;
+    }
+
+    .glass-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .section-headline {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-icon-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--grad-aurora);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    /* =========================================================
+       Beginner Glossary (Interactive Gradient Cards)
+       ========================================================= */
+    .glossary-wrap {
+      background: rgba(14, 18, 30, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      margin-bottom: 26px;
+    }
+
+    .glossary-head {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #00f2fe;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .glossary-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .glossary-card-item {
+      background: rgba(22, 28, 48, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      border-top: 2px solid #7928ca;
+      transition: all 0.25s ease;
+    }
+
+    .glossary-card-item:hover {
+      border-top-color: #00f2fe;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 242, 254, 0.15);
+    }
+
+    .glossary-term-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+
+    .glossary-term-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* =========================================================
+       Section 1: 3-Card Summary Grid (Glowing Border Style)
+       ========================================================= */
+    .summary-phase-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .phase-card-glow {
+      background: rgba(20, 26, 46, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .phase-card-glow:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 242, 254, 0.2);
+    }
+
+    .phase-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .phase-badge-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #00f2fe;
+    }
+
+    .phase-card-title {
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .phase-card-desc {
+      font-size: 0.88rem;
+      color: var(--text-sub);
+      line-height: 1.55;
+    }
+
+    .phase-bottom-callout {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.82rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Narrative Stream */
+    .narrative-stream {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .narrative-box {
+      background: rgba(16, 22, 38, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-md);
+      padding: 18px 22px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .step-glow-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(0, 242, 254, 0.15);
+      border: 1px solid #00f2fe;
+      color: #00f2fe;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      box-shadow: 0 0 10px rgba(0, 242, 254, 0.25);
+    }
+
+    .narrative-content h4 {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .narrative-content p {
+      font-size: 0.88rem;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+
+    /* =========================================================
+       Section 2: Glowing Chart
+       ========================================================= */
+    .chart-container-glow {
+      position: relative;
+      height: 390px;
+      width: 100%;
+      margin: 16px 0 16px;
+    }
+
+    .neon-toggle-btn {
+      background: rgba(0, 242, 254, 0.1);
+      border: 1px solid rgba(0, 242, 254, 0.4);
+      color: #00f2fe;
+      padding: 7px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 0 12px rgba(0, 242, 254, 0.2);
+    }
+
+    .neon-toggle-btn.active, .neon-toggle-btn:hover {
+      background: var(--grad-cyan-blue);
+      color: #05070d;
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.5);
+      border-color: #00f2fe;
+    }
+
+    .chart-legend-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    /* =========================================================
+       NEW FEATURE: 모의 투자 계산기 (Simulator Widget)
+       ========================================================= */
+    .calculator-widget {
+      background: linear-gradient(135deg, rgba(121, 40, 202, 0.15) 0%, rgba(0, 242, 254, 0.1) 100%);
+      border: 1px solid rgba(0, 242, 254, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      margin-top: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .calc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .calc-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .calc-inputs-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.2fr;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .calc-input-box {
+      background: rgba(10, 14, 24, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .calc-input-box label {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .calc-input-box input {
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.15rem;
+      font-weight: 700;
+      outline: none;
+    }
+
+    .calc-result-box {
+      background: rgba(10, 14, 24, 0.95);
+      border: 1px solid rgba(52, 211, 153, 0.5);
+      border-radius: var(--radius-md);
+      padding: 10px 16px;
+      box-shadow: 0 0 15px rgba(52, 211, 153, 0.15);
+    }
+
+    .calc-result-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #34d399;
+    }
+
+    /* =========================================================
+       Section 3: Business Units Grid
+       ========================================================= */
+    .business-hologram-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .business-holo-card {
+      background: rgba(18, 24, 42, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .business-holo-card:hover {
+      border-color: rgba(0, 242, 254, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 242, 254, 0.15);
+    }
+
+    .biz-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .biz-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+
+    .biz-desc {
+      font-size: 0.88rem;
+      color: var(--text-sub);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .biz-highlight-pill {
+      background: rgba(0, 242, 254, 0.08);
+      border: 1px solid rgba(0, 242, 254, 0.25);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      color: #00f2fe;
+      line-height: 1.45;
+    }
+
+    /* =========================================================
+       Section 4: Checklist
+       ========================================================= */
+    .checklist-neon-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .check-holo-card {
+      background: rgba(18, 24, 42, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.3s ease;
+    }
+
+    .check-holo-card:hover {
+      border-color: rgba(168, 85, 247, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .check-item-title {
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+
+    .check-item-desc {
+      font-size: 0.88rem;
+      color: var(--text-sub);
+      line-height: 1.55;
+      margin: 10px 0 14px;
+    }
+
+    .check-neon-note {
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      color: #fbbf24;
+      line-height: 1.45;
+    }
+
+    /* =========================================================
+       Section 5: High-Tech Table
+       ========================================================= */
+    .hologram-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(10, 14, 24, 0.7);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      text-align: right;
+    }
+
+    th {
+      background: rgba(16, 22, 38, 0.95);
+      color: #00f2fe;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      padding: 15px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 13px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-sub);
+      white-space: nowrap;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(0, 242, 254, 0.05);
+      color: #ffffff;
+    }
+
+    td:first-child, th:first-child {
+      text-align: left;
+    }
+
+    .td-date-neon {
+      color: #00f2fe;
+      font-weight: 600;
+    }
+
+    .td-price-main {
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    /* Footer */
+    footer {
+      max-width: 1120px;
+      margin: 44px auto 0;
+      padding: 28px 20px 50px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* Mobile Responsive Adaptation */
+    @media (max-width: 900px) {
+      .metrics-aurora-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .summary-phase-grid {
+        grid-template-columns: 1fr;
+      }
+      .business-hologram-grid {
+        grid-template-columns: 1fr;
+      }
+      .checklist-neon-grid {
+        grid-template-columns: 1fr;
+      }
+      .glossary-cards-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .calc-inputs-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 0 14px;
+        margin-top: 24px;
+      }
+      .company-title {
+        font-size: 2.1rem;
+      }
+      .metrics-aurora-grid {
+        grid-template-columns: 1fr;
+      }
+      .glass-section {
+        padding: 22px 16px;
+        border-radius: var(--radius-lg);
+      }
+      .glossary-cards-grid {
+        grid-template-columns: 1fr;
+      }
+      .chart-container-glow {
+        height: 290px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Animated Cosmic Aurora Orbs -->
+  <div class="cosmic-mesh" aria-hidden="true">
+    <div class="aurora-orb orb-1"></div>
+    <div class="aurora-orb orb-2"></div>
+    <div class="aurora-orb orb-3"></div>
+    <div class="aurora-orb orb-gold"></div>
+  </div>
+
+  <!-- Cosmic Grid Overlay -->
+  <div class="cosmic-grid" aria-hidden="true"></div>
+
+  <!-- Top Floating Aurora Capsule -->
+  <div class="top-floating-wrap">
+    <div class="top-floating-pill" role="alert">
+      <span class="neon-pulse-dot"></span>
+      <span class="pill-glow-badge">AI 초안</span>
+      <span>저장 자료 기준일: <strong>2026-11-13 (미국 장마감)</strong></span>
+      <span>•</span>
+      <span>실시간 시세 아님</span>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- Hero Card -->
+    <header class="hero-glow-card">
+      <div class="hero-top">
+        <div>
+          <div class="eyebrow-chip">
+            <span>✦ Space Exploration Technologies Corp.</span>
+          </div>
+          <h1 class="company-title">
+            <span class="gradient-title-text">스페이스X</span>
+            <span class="ticker-glow-pill">NASDAQ : SPCX</span>
+            <span class="holo-tag tag-fact"><span class="holo-dot"></span>사실: 거래소·종목코드 확인</span>
+          </h1>
+          <div class="meta-details-row">
+            <span>📅 자료 기준일: <strong>2026년 11월 13일 (미국 정규장 마감)</strong></span>
+            <span>•</span>
+            <span>💵 통화: <strong>USD ($) / 원화 환산 ($1 = 약 ₩1,400 기준)</strong></span>
+            <span>•</span>
+            <span>출처: 나스닥(NASDAQ) 정규장 공시</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Metrics Aurora Grid -->
+      <div class="metrics-aurora-grid">
+        <div class="metric-holo-card featured-main">
+          <div class="holo-label">
+            <span>최근 1개월 종가 (마지막 가격)</span>
+            <span class="holo-tag tag-fact"><span class="holo-dot"></span>사실</span>
+          </div>
+          <div class="holo-value glow-gold">$139.11</div>
+          <div class="holo-sub">우리 돈 <strong>약 19만 4,750원</strong></div>
+        </div>
+
+        <div class="metric-holo-card">
+          <div class="holo-label">
+            <span>1개월 주가 변동률</span>
+            <span class="holo-tag tag-fact"><span class="holo-dot"></span>사실</span>
+          </div>
+          <div class="holo-value neon-down">-8.58%</div>
+          <div class="holo-sub">10/14($152.16) 대비 <strong>-$13.05 하락</strong></div>
+        </div>
+
+        <div class="metric-holo-card">
+          <div class="holo-label">
+            <span>1개월 최고 / 최저</span>
+            <span class="holo-tag tag-fact"><span class="holo-dot"></span>사실</span>
+          </div>
+          <div class="holo-value" style="font-size: 1.45rem;">
+            <span style="color: #f43f5e;">$166.18</span> <span style="font-size: 0.9rem; color: var(--text-muted);">/</span> <span style="color: #38bdf8;">$120.39</span>
+          </div>
+          <div class="holo-sub">고점 10/21 • 저점 11/05</div>
+        </div>
+
+        <div class="metric-holo-card">
+          <div class="holo-label">
+            <span>공모가($135.00) 대비</span>
+            <span class="holo-tag tag-fact"><span class="holo-dot"></span>사실</span>
+          </div>
+          <div class="holo-value neon-up">+3.04%</div>
+          <div class="holo-sub">상장 첫 판매가 대비 <strong>수익권 유지</strong></div>
+        </div>
+      </div>
+
+      <!-- Legend Strip -->
+      <div class="legend-floating-strip">
+        <span style="font-weight: 700; color: #ffffff;">신뢰도 3단계 배지 안내:</span>
+        <div class="legend-tags-group">
+          <span class="holo-tag tag-fact"><span class="holo-dot"></span>사실 (공식 체결가·공시)</span>
+          <span class="holo-tag tag-ai"><span class="holo-dot"></span>AI 해석 (시장 흐름 풀이)</span>
+          <span class="holo-tag tag-check"><span class="holo-dot"></span>확인 필요 (비공개 계약·지표)</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Beginner Glossary (Interactive Cards) -->
+    <section class="glossary-wrap">
+      <div class="glossary-head">
+        <span>💡 주식 입문자를 위한 쉬운 용어 돋보기</span>
+      </div>
+      <div class="glossary-cards-grid">
+        <div class="glossary-card-item">
+          <div class="glossary-term-name">종가 (Closing Price)</div>
+          <div class="glossary-term-desc">그날 미국 주식시장 마감 시점에 마지막으로 거래된 가격입니다.</div>
+        </div>
+        <div class="glossary-card-item">
+          <div class="glossary-term-name">공모가 (IPO Price)</div>
+          <div class="glossary-term-desc">회사가 처음 상장할 때 일반인에게 판매한 첫 공식 정가($135)입니다.</div>
+        </div>
+        <div class="glossary-card-item">
+          <div class="glossary-term-name">지지선 (Support Level)</div>
+          <div class="glossary-term-desc">"이 가격이면 싸다"며 매수세가 붙어 주가가 더 안 떨어지게 받쳐주는 가격대입니다.</div>
+        </div>
+        <div class="glossary-card-item">
+          <div class="glossary-term-name">보호예수 (Lock-up)</div>
+          <div class="glossary-term-desc">상장 직후 임직원이 주식을 한꺼번에 팔지 못하게 묶어둔 약속 기간입니다.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 1: 핵심 요약 (Aurora 3-Phase Cards) -->
+    <section class="glass-section">
+      <div class="glass-section-header">
+        <h2 class="section-headline">
+          <span class="section-icon-badge">📝</span> 1. 한눈에 보는 핵심 요약 (최근 1개월 흐름 3줄 정리)
+        </h2>
+        <span class="holo-tag tag-ai"><span class="holo-dot"></span>AI 흐름 풀이</span>
+      </div>
+
+      <div class="summary-phase-grid">
+        <div class="phase-card-glow" style="border-top: 2px solid #ff007a;">
+          <div>
+            <div class="phase-top-bar">
+              <span class="phase-badge-label">PHASE 01 • 10월 중순</span>
+              <span class="holo-tag tag-fact"><span class="holo-dot"></span>사실</span>
+            </div>
+            <div class="phase-card-title">최고가 랠리 ($166.18)</div>
+            <div class="phase-card-desc">
+              스타링크 가입자 증가와 3분기 실적 기대감에 <strong>10월 21일 $166.18까지 급상승</strong>하며 한 달 중 최고가를 기록했습니다.
+            </div>
+          </div>
+          <div class="phase-bottom-callout" style="color: #ff007a;">
+            <span>↗ 10/21 장중 최고가 기록</span>
+          </div>
+        </div>
+
+        <div class="phase-card-glow" style="border-top: 2px solid #7928ca;">
+          <div>
+            <div class="phase-top-bar">
+              <span class="phase-badge-label">PHASE 02 • 10월 말~11월 초</span>
+              <span class="holo-tag tag-ai"><span class="holo-dot"></span>AI 해석</span>
+            </div>
+            <div class="phase-card-title">일시적 급락 ($120.39)</div>
+            <div class="phase-card-desc">
+              많이 오른 주식을 팔아 차익을 챙기려는 매물과 미국 대선 전후 시장 불안으로 <strong>11월 5일 $120.39까지 급하게 하락</strong>했습니다.
+            </div>
+          </div>
+          <div class="phase-bottom-callout" style="color: #a855f7;">
+            <span>↘ 11/05 단기 바닥 확인</span>
+          </div>
+        </div>
+
+        <div class="phase-card-glow" style="border-top: 2px solid #00f2fe;">
+          <div>
+            <div class="phase-top-bar">
+              <span class="phase-badge-label">PHASE 03 • 11월 중순</span>
+              <span class="holo-tag tag-ai"><span class="holo-dot"></span>AI 해석</span>
+            </div>
+            <div class="phase-card-title">공모가 위로 반등 ($139.11)</div>
+            <div class="phase-card-desc">
+              "너무 많이 떨어졌다"는 저가 매수세가 들어오며 회사의 기준점인 <strong>공모가($135.00)를 딛고 $139.11로 안전하게 회복</strong>했습니다.
+            </div>
+          </div>
+          <div class="phase-bottom-callout" style="color: #00f2fe;">
+            <span>✓ $135 공모가 지지 확인</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Narrative Timeline Stream -->
+      <div class="narrative-stream">
+        <div class="narrative-box">
+          <div class="step-glow-circle">1</div>
+          <div class="narrative-content">
+            <h4>
+              10월 중순 ($152.16 ➔ $166.18): 기대감에 힘입은 강한 상승
+              <span class="holo-tag tag-fact"><span class="holo-dot"></span>사실: 10/21 최고가 $166.18</span>
+            </h4>
+            <p>10월 14일 $152.16에서 시작한 주가는 로켓 연속 발사 성공과 위성 인터넷 가입자 급증 소식 덕분에 10월 21일 장중 최고 $166.18(종가 $159.31)까지 오르며 투자자들의 큰 관심을 받았습니다.</p>
+          </div>
+        </div>
+
+        <div class="narrative-box">
+          <div class="step-glow-circle">2</div>
+          <div class="narrative-content">
+            <h4>
+              10월 말~11월 초 ($143.89 ➔ $120.39): 주식시장 전반의 숨고르기와 하락
+              <span class="holo-tag tag-ai"><span class="holo-dot"></span>AI 해석: 매크로 시장 불안</span>
+            </h4>
+            <p>고점을 찍은 뒤 수익 실현 매물이 쏟아졌고, 11월 5일 미국 대선을 앞두고 기술주 전반이 흔들리면서 한때 공모가 밑인 $120.39(종가 $123.62)까지 일시적으로 미끄러졌습니다.</p>
+          </div>
+        </div>
+
+        <div class="narrative-box">
+          <div class="step-glow-circle">3</div>
+          <div class="narrative-content">
+            <h4>
+              11월 둘째 주 ($123.62 ➔ $139.11): "공모가 밑은 싸다"며 강한 반등
+              <span class="holo-tag tag-ai"><span class="holo-dot"></span>AI 해석: $135 지지력 확인</span>
+            </h4>
+            <p>단기 바닥을 확인하자마자 저가 매수세가 강하게 들어왔습니다. 11월 10일 $143.09까지 치솟은 뒤 숨을 고르며 11월 13일 $139.11에 마감했습니다. 최초 공모가($135.00)보다 <strong>+3.04% 높은 가격대</strong>를 방어하며 안정을 찾는 모양새입니다.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: 최근 1개월 종가 차트 -->
+    <section class="glass-section">
+      <div class="glass-section-header">
+        <h2 class="section-headline">
+          <span class="section-icon-badge">📈</span> 2. 최근 1개월 종가 차트 (2026-10-14 ~ 2026-11-13)
+        </h2>
+        <button class="neon-toggle-btn active" id="btnToggleIPO">공모가($135) 기준선 표시 켜기/끄기</button>
+      </div>
+
+      <div style="font-size: 0.86rem; color: var(--text-sub); margin-bottom: 12px;">
+        👉 차트에 마우스를 올리거나(PC) 터치(휴대폰)하시면 일자별 <strong>달러 가격, 원화 환산 가격, 거래량</strong>이 표시됩니다.
+      </div>
+
+      <div class="chart-container-glow">
+        <canvas id="spcxChart"></canvas>
+      </div>
+
+      <div class="chart-legend-row">
+        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+          <span>🔴 <strong>최고가:</strong> $166.18 (10/21)</span>
+          <span>🔵 <strong>최저가:</strong> $120.39 (11/05)</span>
+          <span>🟢 <strong>공모가:</strong> $135.00</span>
+        </div>
+        <div>
+          데이터 출처: NASDAQ 정규장 공시 (마우스 및 터치 인터랙티브 지원)
+        </div>
+      </div>
+
+      <!-- NEW INTERACTIVE PROFIT SIMULATOR -->
+      <div class="calculator-widget">
+        <div class="calc-header">
+          <div class="calc-title">
+            <span>⚡ 초보자를 위한 모의 투자 수익 계산기</span>
+          </div>
+          <span style="font-size: 0.8rem; color: #a855f7;">입력 즉시 자동 계산</span>
+        </div>
+        <div class="calc-inputs-row">
+          <div class="calc-input-box">
+            <label>공모가($135)에 산 주식 수 (주)</label>
+            <input type="number" id="calcShares" value="10" min="1" max="10000">
+          </div>
+          <div class="calc-input-box">
+            <label>원래 투자했던 원금 (달러 / 원화)</label>
+            <div id="calcPrincipal" style="font-family: 'JetBrains Mono'; font-weight: 700; color: #ffffff; padding-top: 4px;">$1,350 (약 ₩1,890,000)</div>
+          </div>
+          <div class="calc-result-box">
+            <div style="font-size: 0.74rem; color: #34d399; font-weight: 600;">현재 평가 가치 및 수익금 (+$41.10 / +3.04%)</div>
+            <div class="calc-result-num" id="calcCurrentValue">$1,391.10 (약 ₩1,947,540)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: 회사 소개 -->
+    <section class="glass-section">
+      <div class="glass-section-header">
+        <h2 class="section-headline">
+          <span class="section-icon-badge">🏢</span> 3. 회사 소개: 스페이스X는 무엇으로 돈을 버나요?
+        </h2>
+        <span class="holo-tag tag-fact"><span class="holo-dot"></span>사업 구조</span>
+      </div>
+
+      <p style="color: var(--text-sub); margin-bottom: 20px; font-size: 0.94rem; line-height: 1.65;">
+        스페이스X는 2002년 <strong>일론 머스크</strong>가 세운 세계 최대 민간 우주 회사입니다. 핵심 경쟁력은 <strong>"로켓을 한 번 쓰고 버리지 않고 비행기처럼 다시 띄워 발사 비용을 획기적으로 낮춘 것"</strong>입니다. 오랫동안 비상장 기업으로 머물며 기업가치를 키워오다, <strong>2026년 6월 12일 미국 나스닥(NASDAQ)에 'SPCX'라는 종목코드로 역사적인 상장</strong>을 마쳤습니다.
+      </p>
+
+      <div class="business-hologram-grid">
+        <div class="business-holo-card">
+          <div class="biz-card-head">
+            <div class="biz-title">🛰️ 스타링크 (Starlink)</div>
+            <span class="holo-tag tag-fact"><span class="holo-dot"></span>핵심 캐시카우</span>
+          </div>
+          <div class="biz-desc">
+            지구 주변에 수천 개의 인공위성을 띄워 비행기, 배, 오지 마을까지 초고속 인터넷을 제공하는 우주 인터넷망입니다.
+          </div>
+          <div class="biz-highlight-pill">
+            💡 매달 요금을 받는 구독형 모델이라 회사에 정기적이고 안정적인 현금을 채워줍니다.
+          </div>
+        </div>
+
+        <div class="business-holo-card">
+          <div class="biz-card-head">
+            <div class="biz-title">🚀 팰컨 9 & 팰컨 헤비</div>
+            <span class="holo-tag tag-fact"><span class="holo-dot"></span>세계 1등 로켓</span>
+          </div>
+          <div class="biz-desc">
+            발사 후 거꾸로 착륙해 재사용하는 주력 로켓입니다. NASA 우주비행사나 다른 나라 위성을 대신 우주로 쏴주는 배달부 역할을 합니다.
+          </div>
+          <div class="biz-highlight-pill">
+            💡 전 세계 상업용 로켓 발사 시장의 과반을 휩쓸고 있는 독점적 기술입니다.
+          </div>
+        </div>
+
+        <div class="business-holo-card">
+          <div class="biz-card-head">
+            <div class="biz-title">🌌 스타십 (Starship)</div>
+            <span class="holo-tag tag-fact"><span class="holo-dot"></span>미래 성장 엔진</span>
+          </div>
+          <div class="biz-desc">
+            인류 역사상 가장 큰 초대형 우주선입니다. NASA와 손잡고 달에 사람을 보내는 프로젝트(아르테미스)와 미래 화성 탐사를 위해 개발 중입니다.
+          </div>
+          <div class="biz-highlight-pill">
+            💡 앞으로 이 우주선이 상용화되면 위성을 한 번에 수백 개씩 띄울 수 있어 원가가 더 줄어듭니다.
+          </div>
+        </div>
+
+        <div class="business-holo-card">
+          <div class="biz-card-head">
+            <div class="biz-title">🛡️ 스타실드 (Starshield)</div>
+            <span class="holo-tag tag-check"><span class="holo-dot"></span>확인 필요: 계약 규모</span>
+          </div>
+          <div class="biz-desc">
+            미국 국방부나 정보기관만을 위해 보안 암호화와 정찰 감시 기능을 특화해 납품하는 군사용 비밀 위성망입니다.
+          </div>
+          <div class="biz-highlight-pill" style="border-color: rgba(245, 158, 11, 0.4); color: #fcd34d;">
+            ⚠️ 군사 기밀 계약이 많아 분기별 정확한 이익률과 계약 규모는 공식적으로 미공개 상태입니다.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: 더 확인할 것 (Checklist) -->
+    <section class="glass-section">
+      <div class="glass-section-header">
+        <h2 class="section-headline">
+          <span class="section-icon-badge">🔍</span> 4. 주식 입문자가 앞으로 꼭 챙겨봐야 할 4가지
+        </h2>
+        <span class="holo-tag tag-check"><span class="holo-dot"></span>핵심 체크포인트</span>
+      </div>
+
+      <div class="checklist-neon-grid">
+        <div class="check-holo-card">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+              <div class="check-item-title">1. 스타십 차기 시험 비행 일정</div>
+              <span class="holo-tag tag-fact"><span class="holo-dot"></span>성공 여부 주목</span>
+            </div>
+            <div class="check-item-desc">
+              스타십이 공중에서 폭발하지 않고 바다에 안전하게 안착하거나 로봇팔로 착륙 부스터를 잡는 시험이 성공하면 주가에 큰 호재가 됩니다.
+            </div>
+          </div>
+          <div class="check-neon-note">
+            💡 시험 비행 성공 뉴스는 호재이나, 실패 시 단기 출렁임이 올 수 있습니다.
+          </div>
+        </div>
+
+        <div class="check-holo-card">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+              <div class="check-item-title">2. 휴대폰으로 바로 터지는 위성 인터넷</div>
+              <span class="holo-tag tag-fact"><span class="holo-dot"></span>가입자 성장</span>
+            </div>
+            <div class="check-item-desc">
+              별도 접시 안테나 없이 우리가 쓰는 일반 스마트폰으로 위성 문자와 통화가 되는 서비스(Direct to Cell)가 얼마나 빨리 상용화되는지 봐야 합니다.
+            </div>
+          </div>
+          <div class="check-neon-note">
+            💡 전 세계 수억 명의 스마트폰 사용자가 잠재 고객이 되므로 매출 점프의 열쇠입니다.
+          </div>
+        </div>
+
+        <div class="check-holo-card">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+              <div class="check-item-title">3. 12월 보호예수(락업) 해제 물량 주의</div>
+              <span class="holo-tag tag-check"><span class="holo-dot"></span>수급 확인필요</span>
+            </div>
+            <div class="check-item-desc">
+              2026년 6월 12일 상장 후 6개월 동안 주식을 못 팔게 묶어뒀던 직원과 초기 투자자들의 주식이 2026년 12월 중순부터 시장에 나올 수 있습니다.
+            </div>
+          </div>
+          <div class="check-neon-note" style="color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);">
+            ⚠️ 시장에 파는 주식 물량이 일시적으로 늘어나면 주가가 무거워질 수 있습니다.
+          </div>
+        </div>
+
+        <div class="check-holo-card">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+              <div class="check-item-title">4. 미국 정부(NASA) 예산과 규제</div>
+              <span class="holo-tag tag-ai"><span class="holo-dot"></span>정책 변수</span>
+            </div>
+            <div class="check-item-desc">
+              스페이스X는 정부와 NASA로부터 수십억 달러짜리 대형 계약을 많이 따냅니다. 정부의 우주 탐사 예산이 깎이지 않는지 확인해야 합니다.
+            </div>
+          </div>
+          <div class="check-neon-note">
+            💡 가장 큰 단골손님(미국 정부)의 지갑 사정에 따라 미래 일감이 영향을 받습니다.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: 상세 일별 시세 테이블 -->
+    <section class="glass-section">
+      <div class="glass-section-header">
+        <h2 class="section-headline">
+          <span class="section-icon-badge">📋</span> 5. 최근 1달간의 날짜별 시세 표 (23거래일 기록)
+        </h2>
+        <span class="holo-tag tag-fact"><span class="holo-dot"></span>spacex_market_data.json</span>
+      </div>
+
+      <div class="hologram-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>DATE</th>
+              <th>종가 (USD)</th>
+              <th>원화 환산 (KRW)</th>
+              <th>시작 가격</th>
+              <th>고가</th>
+              <th>저가</th>
+              <th>거래된 주식 수</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <!-- JS Injected -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Minimal Footer -->
+  <footer>
+    <p>
+      <strong>[대시보드 작성 기준 및 법적 안내]</strong><br>
+      본 대시보드는 컴퓨터에 저장된 공개 자료(<code>spacex_market_data.json</code>)를 바탕으로 주식 초보자의 쉬운 이해를 돕기 위해 작성된 <strong>AI 초안</strong>입니다. <strong>실시간 시세가 아니며</strong>, 특정 주식의 매수나 매도를 추천하지 않습니다. 주식 투자는 원금 손실 위험이 있으므로 최종 투자 판단과 책임은 투자자 본인에게 있습니다.
+    </p>
+    <div style="margin-top: 10px; color: var(--text-muted);">
+      자료 출처: 나스닥(NASDAQ) 정규장 공시, StockAnalysis, TradingView, TradingKey, SpaceX 공개 자료<br>
+      데이터 수집 및 기준 일시: 2026-11-14 (자료 기준: 2026-11-13 미국 정규장 마감) | 환율 기준: 1 USD = 1,400 KRW (참고용)
+    </div>
+  </footer>
+
+  <!-- JavaScript for Interactive Chart, Data Population & Simulator -->
+  <script>
+    const marketData = {
+      dailyPrices: [
+        { "date": "2026-10-14", "open": 154.98, "high": 155.44, "low": 151.10, "close": 152.16, "volume": 68780000 },
+        { "date": "2026-10-15", "open": 146.91, "high": 149.04, "low": 140.66, "close": 148.62, "volume": 101180000 },
+        { "date": "2026-10-16", "open": 147.80, "high": 147.92, "low": 142.95, "close": 146.03, "volume": 88550000 },
+        { "date": "2026-10-19", "open": 149.23, "high": 151.01, "low": 146.83, "close": 147.96, "volume": 74037780 },
+        { "date": "2026-10-20", "open": 146.17, "high": 148.66, "low": 143.27, "close": 147.79, "volume": 117204886 },
+        { "date": "2026-10-21", "open": 160.56, "high": 166.18, "low": 156.93, "close": 159.31, "volume": 220785163 },
+        { "date": "2026-10-22", "open": 154.21, "high": 154.26, "low": 143.21, "close": 144.75, "volume": 197046495 },
+        { "date": "2026-10-23", "open": 147.93, "high": 149.75, "low": 144.09, "close": 147.49, "volume": 110617461 },
+        { "date": "2026-10-26", "open": 146.84, "high": 150.24, "low": 144.57, "close": 146.90, "volume": 103184900 },
+        { "date": "2026-10-27", "open": 147.41, "high": 151.36, "low": 146.61, "close": 148.58, "volume": 95845383 },
+        { "date": "2026-10-28", "open": 147.37, "high": 148.20, "low": 142.13, "close": 145.23, "volume": 98705832 },
+        { "date": "2026-10-29", "open": 142.26, "high": 144.95, "low": 141.03, "close": 143.89, "volume": 68364402 },
+        { "date": "2026-10-30", "open": 137.85, "high": 140.20, "low": 134.50, "close": 134.72, "volume": 122653591 },
+        { "date": "2026-11-02", "open": 137.01, "high": 142.05, "low": 135.72, "close": 136.37, "volume": 90995429 },
+        { "date": "2026-11-03", "open": 137.63, "high": 142.74, "low": 137.50, "close": 141.31, "volume": 73241993 },
+        { "date": "2026-11-04", "open": 133.24, "high": 140.50, "low": 133.14, "close": 135.92, "volume": 135443382 },
+        { "date": "2026-11-05", "open": 131.34, "high": 131.87, "low": 120.39, "close": 123.62, "volume": 171356235 },
+        { "date": "2026-11-06", "open": 130.94, "high": 135.32, "low": 128.57, "close": 134.27, "volume": 115494958 },
+        { "date": "2026-11-09", "open": 136.51, "high": 143.20, "low": 135.37, "close": 142.07, "volume": 103473158 },
+        { "date": "2026-11-10", "open": 139.16, "high": 144.89, "low": 137.65, "close": 143.09, "volume": 82134539 },
+        { "date": "2026-11-11", "open": 143.38, "high": 145.16, "low": 138.62, "close": 139.75, "volume": 114209103 },
+        { "date": "2026-11-12", "open": 137.85, "high": 147.60, "low": 137.75, "close": 139.94, "volume": 95961810 },
+        { "date": "2026-11-13", "open": 140.17, "high": 142.24, "low": 136.64, "close": 139.11, "volume": 76637816 }
+      ],
+      ipoPrice: 135.00,
+      currentClose: 139.11,
+      krwRate: 1400
+    };
+
+    // Populate Daily Table
+    const tableBody = document.getElementById('tableBody');
+    const sortedDescending = [...marketData.dailyPrices].reverse();
+
+    sortedDescending.forEach(item => {
+      const tr = document.createElement('tr');
+      const krwVal = Math.round(item.close * marketData.krwRate).toLocaleString();
+      tr.innerHTML = `
+        <td class="td-date-neon">${item.date}</td>
+        <td class="td-price-main">$${item.close.toFixed(2)}</td>
+        <td style="color: #cbd5e1;">약 ₩${krwVal}</td>
+        <td>$${item.open.toFixed(2)}</td>
+        <td style="color: #f43f5e;">$${item.high.toFixed(2)}</td>
+        <td style="color: #38bdf8;">$${item.low.toFixed(2)}</td>
+        <td>${item.volume.toLocaleString()} 주</td>
+      `;
+      tableBody.appendChild(tr);
+    });
+
+    // Chart.js Neon Area Curve
+    const labels = marketData.dailyPrices.map(d => d.date.substring(5)); // MM-DD
+    const closeData = marketData.dailyPrices.map(d => d.close);
+    const ipoLineData = marketData.dailyPrices.map(() => marketData.ipoPrice);
+
+    const ctx = document.getElementById('spcxChart').getContext('2d');
+    
+    // Multi-Stop Cyan to Violet Neon Gradient
+    const gradient = ctx.createLinearGradient(0, 0, 0, 360);
+    gradient.addColorStop(0, 'rgba(0, 242, 254, 0.45)');
+    gradient.addColorStop(0.5, 'rgba(121, 40, 202, 0.2)');
+    gradient.addColorStop(1, 'rgba(0, 242, 254, 0.0)');
+
+    let showIPO = true;
+
+    const chartConfig = {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: '종가 (USD)',
+            data: closeData,
+            borderColor: '#00f2fe',
+            backgroundColor: gradient,
+            borderWidth: 2.8,
+            fill: true,
+            tension: 0.35,
+            pointBackgroundColor: '#ffffff',
+            pointBorderColor: '#00f2fe',
+            pointBorderWidth: 2,
+            pointRadius: 3.5,
+            pointHoverRadius: 7,
+          },
+          {
+            label: '공모가 ($135.00)',
+            data: ipoLineData,
+            borderColor: '#34d399',
+            borderWidth: 1.8,
+            borderDash: [5, 5],
+            fill: false,
+            pointRadius: 0,
+            hidden: !showIPO
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            backgroundColor: 'rgba(14, 18, 32, 0.95)',
+            titleColor: '#00f2fe',
+            titleFont: {
+              family: 'JetBrains Mono',
+              weight: 'bold'
+            },
+            bodyColor: '#ffffff',
+            borderColor: 'rgba(0, 242, 254, 0.5)',
+            borderWidth: 1,
+            cornerRadius: 12,
+            padding: 14,
+            boxPadding: 6,
+            callbacks: {
+              label: function(context) {
+                if (context.datasetIndex === 0) {
+                  const val = context.parsed.y;
+                  const krw = Math.round(val * marketData.krwRate).toLocaleString();
+                  const raw = marketData.dailyPrices[context.dataIndex];
+                  return [
+                    ` 💵 종가: $${val.toFixed(2)} (우리 돈 약 ₩${krw})`,
+                    ` 🔺 고가: $${raw.high.toFixed(2)} / 🔻 저가: $${raw.low.toFixed(2)}`,
+                    ` 🔄 거래량: ${raw.volume.toLocaleString()} 주`
+                  ];
+                } else {
+                  return ` 🟢 공모가 기준선: $${context.parsed.y.toFixed(2)}`;
+                }
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false
+            },
+            ticks: {
+              color: '#8492a6',
+              font: {
+                family: 'JetBrains Mono',
+                size: 11
+              }
+            }
+          },
+          y: {
+            min: 115,
+            max: 175,
+            position: 'right',
+            grid: {
+              color: 'rgba(255, 255, 255, 0.05)'
+            },
+            ticks: {
+              color: '#8492a6',
+              font: {
+                family: 'JetBrains Mono',
+                size: 11
+              },
+              callback: function(value) {
+                return '$' + value;
+              }
+            }
+          }
+        }
+      }
+    };
+
+    const stockChart = new Chart(ctx, chartConfig);
+
+    // Toggle IPO Line
+    const btnToggleIPO = document.getElementById('btnToggleIPO');
+    btnToggleIPO.addEventListener('click', () => {
+      showIPO = !showIPO;
+      stockChart.data.datasets[1].hidden = !showIPO;
+      btnToggleIPO.classList.toggle('active', showIPO);
+      stockChart.update();
+    });
+
+    // Profit Simulator Logic
+    const calcShares = document.getElementById('calcShares');
+    const calcPrincipal = document.getElementById('calcPrincipal');
+    const calcCurrentValue = document.getElementById('calcCurrentValue');
+
+    function updateCalc() {
+      const shares = Math.max(1, parseInt(calcShares.value) || 1);
+      const principalUsd = shares * marketData.ipoPrice;
+      const principalKrw = Math.round(principalUsd * marketData.krwRate);
+      
+      const currentUsd = shares * marketData.currentClose;
+      const currentKrw = Math.round(currentUsd * marketData.krwRate);
+      
+      const profitUsd = currentUsd - principalUsd;
+      const profitPct = ((profitUsd / principalUsd) * 100).toFixed(2);
+
+      calcPrincipal.textContent = `$${principalUsd.toLocaleString()} (약 ₩${principalKrw.toLocaleString()})`;
+      calcCurrentValue.textContent = `$${currentUsd.toFixed(2)} (약 ₩${currentKrw.toLocaleString()}) [+$${profitUsd.toFixed(2)} / +${profitPct}%]`;
+    }
+
+    calcShares.addEventListener('input', updateCalc);
+    updateCalc();
+  </script>
+</body>
+</html>
