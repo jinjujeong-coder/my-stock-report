@@ -1,0 +1,87 @@
+{
+  "metadata": {
+    "company_name": "스페이스X (Space Exploration Technologies Corp.)",
+    "ticker": "SPCX",
+    "exchange": "NASDAQ",
+    "currency": "USD ($)",
+    "krw_exchange_rate_estimate": 1400,
+    "data_collection_date": "2026-11-14",
+    "data_reference_date": "2026-11-13 (미국 현지 장마감 기준)",
+    "sources": [
+      "Nasdaq Global Select Market",
+      "StockAnalysis",
+      "TradingView",
+      "TradingKey",
+      "Company Disclosures & Public Market Archives"
+    ],
+    "notice": "본 데이터는 수집된 공개 기록 기반이며 실시간 시세가 아닙니다."
+  },
+  "company_profile": {
+    "ceo": "일론 머스크 (Elon Musk)",
+    "founded_year": 2002,
+    "headquarters": "미국 텍사스주 보카치카 (Starbase, Texas)",
+    "ipo_date": "2026-06-12",
+    "ipo_price_usd": 135.00,
+    "estimated_market_cap_usd": "약 1조 7,800억 달러 (~$1.78T, 기준가 $135 대비 현재 약 $1.83T)",
+    "core_businesses": [
+      {
+        "name": "스타링크 (Starlink)",
+        "description": "저궤도 초고속 글로벌 위성 인터넷 서비스망",
+        "status_fact": "전 세계 수백만 가입자 확보 및 항공/해상 모빌리티 확장 중"
+      },
+      {
+        "name": "팰컨 9 & 팰컨 헤비 (Falcon 9 & Falcon Heavy)",
+        "description": "세계 최초의 재사용 가능한 중형/대형 로켓",
+        "status_fact": "민간 및 NASA 정부 임무의 절대 다수 발사 점유율 확보"
+      },
+      {
+        "name": "스타십 (Starship)",
+        "description": "완전 재사용 가능한 인류 역사상 최대 크기의 초대형 우주 발사체",
+        "status_fact": "NASA 아르테미스 유인 달 착륙선(HLS) 및 화성 탐사용 개발 시험 중"
+      },
+      {
+        "name": "스타실드 (Starshield)",
+        "description": "미국 국방부 및 정보기관을 위한 특수 방위/정찰 위성망",
+        "status_fact": "정부 보안 계약 수주 진행"
+      }
+    ]
+  },
+  "summary_metrics": {
+    "current_close_usd": 139.11,
+    "current_close_krw": 194754,
+    "one_month_change_usd": -13.05,
+    "one_month_change_pct": -8.58,
+    "one_month_high_usd": 166.18,
+    "one_month_high_date": "2026-10-21",
+    "one_month_low_usd": 120.39,
+    "one_month_low_date": "2026-11-05",
+    "ipo_price_usd": 135.00,
+    "ipo_vs_current_pct": 3.04,
+    "avg_daily_volume": 110540000
+  },
+  "daily_prices": [
+    { "date": "2026-10-14", "open": 154.98, "high": 155.44, "low": 151.10, "close": 152.16, "volume": 68780000 },
+    { "date": "2026-10-15", "open": 146.91, "high": 149.04, "low": 140.66, "close": 148.62, "volume": 101180000 },
+    { "date": "2026-10-16", "open": 147.80, "high": 147.92, "low": 142.95, "close": 146.03, "volume": 88550000 },
+    { "date": "2026-10-19", "open": 149.23, "high": 151.01, "low": 146.83, "close": 147.96, "volume": 74037780 },
+    { "date": "2026-10-20", "open": 146.17, "high": 148.66, "low": 143.27, "close": 147.79, "volume": 117204886 },
+    { "date": "2026-10-21", "open": 160.56, "high": 166.18, "low": 156.93, "close": 159.31, "volume": 220785163 },
+    { "date": "2026-10-22", "open": 154.21, "high": 154.26, "low": 143.21, "close": 144.75, "volume": 197046495 },
+    { "date": "2026-10-23", "open": 147.93, "high": 149.75, "low": 144.09, "close": 147.49, "volume": 110617461 },
+    { "date": "2026-10-26", "open": 146.84, "high": 150.24, "low": 144.57, "close": 146.90, "volume": 103184900 },
+    { "date": "2026-10-27", "open": 147.41, "high": 151.36, "low": 146.61, "close": 148.58, "volume": 95845383 },
+    { "date": "2026-10-28", "open": 147.37, "high": 148.20, "low": 142.13, "close": 145.23, "volume": 98705832 },
+    { "date": "2026-10-29", "open": 142.26, "high": 144.95, "low": 141.03, "close": 143.89, "volume": 68364402 },
+    { "date": "2026-10-30", "open": 137.85, "high": 140.20, "low": 134.50, "close": 134.72, "volume": 122653591 },
+    { "date": "2026-11-02", "open": 137.01, "high": 142.05, "low": 135.72, "close": 136.37, "volume": 90995429 },
+    { "date": "2026-11-03", "open": 137.63, "high": 142.74, "low": 137.50, "close": 141.31, "volume": 73241993 },
+    { "date": "2026-11-04", "open": 133.24, "high": 140.50, "low": 133.14, "close": 135.92, "volume": 135443382 },
+    { "date": "2026-11-05", "open": 131.34, "high": 131.87, "low": 120.39, "close": 123.62, "volume": 171356235 },
+    { "date": "2026-11-06", "open": 130.94, "high": 135.32, "low": 128.57, "close": 134.27, "volume": 115494958 },
+    { "date": "2026-11-09", "open": 136.51, "high": 143.20, "low": 135.37, "close": 142.07, "volume": 103473158 },
+    { "date": "2026-11-10", "open": 139.16, "high": 144.89, "low": 137.65, "close": 143.09, "volume": 82134539 },
+    { "date": "2026-11-11", "open": 143.38, "high": 145.16, "low": 138.62, "close": 139.75, "volume": 114209103 },
+    { "date": "2026-11-12", "open": 137.85, "high": 147.60, "low": 137.75, "close": 139.94, "volume": 95961810 },
+    { "date": "2026-11-13", "open": 140.17, "high": 142.24, "low": 136.64, "close": 139.11, "volume": 76637816 }
+  ]
+}
